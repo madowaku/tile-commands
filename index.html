@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102e30">
+<title>マスに、命令がある。｜ゲーム考古学研究室 #02</title>
+<style>
+:root{color-scheme:light;--ink:#183334;--muted:#607474;--teal:#167e78;--deep:#102e30;--mint:#d3eee3;--gold:#dca45c;--paper:#f8f4e9;--edge:#d7ccba;--bg:#eae9de;--rose:#b6604f}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at 4% 8%,#f8f3e7 0,transparent 45%),radial-gradient(circle at 100% 80%,#dde6da 0,transparent 45%),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;cursor:pointer}button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}button:disabled{cursor:default;opacity:.38}
+.shell{max-width:1060px;margin:0 auto;padding:24px clamp(14px,3vw,34px) 42px}.masthead{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #b8c2b4;padding-bottom:14px}.brand{font-size:12px;font-weight:800;letter-spacing:.13em;color:#315958}.edition{font-size:11px;letter-spacing:.1em;color:var(--muted)}
+.hero{padding:27px 0 20px}.kicker{font-size:12px;font-weight:800;color:var(--teal);letter-spacing:.16em;margin:0 0 8px}.hero h1{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-size:clamp(32px,5.5vw,55px);line-height:1.2;letter-spacing:.03em;margin:0 0 11px;font-weight:800}.hero p{font-size:14px;line-height:1.85;color:#4d6261;margin:0;max-width:670px}.hero strong{color:#146e69}.jump-new{margin-top:10px;background:none;border:0;padding:3px 0;color:#166d67;font-size:12px;font-weight:800;text-decoration:underline;text-underline-offset:3px;cursor:pointer}.jump-new:hover{color:#0b4c49}
+.workspace{display:grid;grid-template-columns:minmax(0,1.16fr) minmax(295px,.84fr);gap:20px;align-items:start}
+.panel{background:var(--paper);border:1px solid #d8ccba;border-radius:19px;box-shadow:0 7px 24px #203e3610,0 1px 2px #203e360d}.board-panel{padding:clamp(14px,2.6vw,24px)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:15px}.level-flag{display:flex;align-items:baseline;gap:10px}.level-index{font-family:Georgia,serif;font-size:29px;line-height:1;color:#1b7771}.level-name{font-size:17px;font-weight:800}.turn-counter{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}.turn-counter strong{font-size:16px;color:var(--ink)}.personal-best{display:block;text-align:right;font-size:11px;color:#7e785f;margin-top:3px}
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;width:100%;aspect-ratio:1;user-select:none;touch-action:manipulation;background:#c9b89c;border:5px solid #bda886;border-radius:12px;padding:4px;box-shadow:inset 0 2px 8px #514b3522,0 9px 20px #394b3520}.cell{position:relative;isolation:isolate;min-width:0;border:0;border-radius:7px;padding:0;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#665747;transition:background .16s,box-shadow .16s,transform .12s}.cell.light{background:#f3e7cf}.cell.dark{background:#e3cda9}.cell .tile-symbol{width:86%;height:86%;display:grid;place-items:center;opacity:.68;transition:opacity .15s,transform .15s;filter:drop-shadow(0 1px 0 #fff6)}.cell.current{background:#e8e2bc;box-shadow:inset 0 0 0 2.5px var(--gold)}.cell .tile-symbol svg{width:100%;height:100%}.cell.current .tile-symbol{opacity:.92;filter:drop-shadow(0 1px 0 #fff9)}.cell.legal{box-shadow:inset 0 0 0 3px #3f9588;background:#c6e6da}.cell.legal:hover{transform:scale(.965);background:#a5dacf}.cell.legal:after{content:"";position:absolute;right:5px;top:5px;width:8px;height:8px;background:#1c9082;border-radius:50%}.cell.legal .tile-symbol{opacity:.7}.cell.goal{background:#dce7bf}.cell.goal.legal{background:#bce1bf}.goal-star{position:absolute;top:6px;right:7px;color:#678451;font-size:clamp(13px,2vw,21px);line-height:1}.goal-label{position:absolute;bottom:5px;right:5px;font-family:Georgia,serif;font-size:9px;color:#697b48;letter-spacing:.02em}.piece{position:absolute;z-index:2;width:30%;height:30%;min-width:16px;min-height:16px;max-width:37px;max-height:37px;aspect-ratio:1;background:radial-gradient(circle at 32% 23%,#fffdf4 0,#fff7e5 43%,#eddfc7 100%);border:2.5px solid #214b4b;border-radius:50%;box-shadow:0 2px 0 #a6a697,0 3px 6px #1d3d333d;display:grid;place-items:center;pointer-events:none}.piece:after{content:"";width:26%;height:26%;border-radius:50%;background:#24585a}.cell.hint{animation:hint 1.1s ease-in-out infinite alternate}.cell.hint:before{content:"";position:absolute;inset:7px;border:3px dashed #c07939;border-radius:4px;z-index:3;pointer-events:none}@keyframes hint{from{filter:saturate(1)}to{filter:saturate(1.5) brightness(1.05)}}
+.board-under{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:14px}.legend-inline{font-size:11px;color:#60726a;display:flex;align-items:center;gap:7px}.dot{width:10px;height:10px;border-radius:3px;background:#abd7c8;border:1.5px solid #409688}.controls{display:flex;gap:8px}.outline{border:1px solid #c3bbab;background:#fffdf5;border-radius:10px;padding:9px 13px;color:#355452;font-weight:700;font-size:12px;transition:background .15s}.outline:hover:not(:disabled){background:#e1eee4}.solid{border:0;border-radius:11px;background:#176e6c;color:white;padding:11px 15px;font-weight:800;box-shadow:0 3px 0 #164a49}.solid:hover:not(:disabled){background:#1a8580}.solid:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 #164a49}
+.sidebar{display:flex;flex-direction:column;gap:14px}.info-panel{padding:22px 23px}.small-label{font-size:11px;letter-spacing:.16em;color:var(--teal);font-weight:900}.task-title{font-size:22px;font-weight:900;line-height:1.45;margin:8px 0}.body-copy{font-size:13px;line-height:1.85;color:#4a625f;margin:0}.current-card{display:flex;align-items:center;gap:14px;border:1px solid #c7ded1;background:#e6f1e8;border-radius:12px;padding:12px;margin-top:17px}.current-icon{width:64px;height:64px;background:#f7fbf1;border:1px solid #cee2d7;border-radius:12px;flex:none;display:grid;place-items:center}.current-icon svg{width:50px;height:50px}.current-text strong{display:block;font-size:15px;margin-bottom:4px}.current-text p{font-size:11px;color:#5c7069;margin:0;line-height:1.6}.state-line{min-height:42px;font-size:12px;line-height:1.7;color:#52706b;margin:12px 0 0}.state-line.success{color:#a35c34;font-weight:800}.side-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.manual{padding:20px 23px}.manual h2{margin:0 0 13px;font-size:14px}.manual-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.rule{border:1px solid #ded8c9;background:#fffcf4;border-radius:10px;padding:8px;display:flex;align-items:center;gap:7px}.rule svg{width:37px;height:37px;flex:none}.rule strong{font-size:12px}.rule span{display:block;font-size:10px;color:#72817a;line-height:1.3;margin-top:3px}.rule.new{border-color:#95c9b9;background:#e8f3eb}.rule.disabled{opacity:.4}.manual p{color:#637771;font-size:11px;line-height:1.8;margin:13px 0 0}
+.levels{padding:18px 23px}.lvl-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.lvl-btn{width:38px;height:38px;border:1px solid #b8c4b7;border-radius:10px;background:#fffdfa;color:#32605d;font-weight:800;font-size:12px}.lvl-btn.active{background:#175c5c;color:#fff;border-color:#175c5c}.lvl-btn.cleared:not(.active){background:#deeadc}.lvl-btn:disabled{opacity:.4}.lvl-btn.perfect:not(.active){border-color:#9baf8c;background:#d7e9d4}.lvl-chapter+.lvl-chapter{border-top:1px dashed #d8d0bc;margin-top:12px;padding-top:11px}.chapter-label{font-size:11px;letter-spacing:.06em;color:#5e7770;font-weight:800}.lvl-chapter .lvl-row{margin-top:7px}.lvl-btn{position:relative}.lvl-btn.perfect:after{content:"";position:absolute;right:3px;top:3px;width:5px;height:5px;background:#bb9252;border-radius:50%}.progress{display:flex;align-items:center;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:12px}.win{display:none;border:1px solid #e2ce9e;background:#fff7dd;border-radius:13px;padding:16px;margin-top:13px}.win.show{display:block}.win b{font-size:18px;color:#9c622e;display:block;margin-bottom:6px}.win p{font-size:12px;line-height:1.7;margin:0 0 11px}.win .solid{width:100%}.note{margin-top:22px;border-top:1px solid #c4ccc1;padding-top:14px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:11px;color:#657972;line-height:1.8}.note strong{color:#265a56}.sr-only{position:absolute;width:1px;height:1px;clip:rect(0,0,0,0);overflow:hidden;white-space:nowrap}
+@media(max-width:750px){.shell{padding:13px 12px 35px}.masthead{padding-bottom:10px}.brand{font-size:11px}.edition{font-size:10px}.hero{padding:24px 7px 17px}.hero h1{font-size:clamp(31px,8vw,43px)}.hero p{font-size:12px}.workspace{grid-template-columns:1fr;gap:12px}.board-panel{padding:12px}.board{gap:4px;border-width:4px;padding:3px}.info-panel,.manual,.levels{padding:17px 18px}.sidebar{gap:12px}.manual-grid{grid-template-columns:repeat(4,1fr);gap:5px}.rule{flex-direction:column;text-align:center;padding:7px 3px;gap:2px}.rule svg{width:34px;height:34px}.rule strong{font-size:10px}.rule span{font-size:9px}.board-under{margin-top:12px}.panel-head{margin-bottom:11px}.task-title{font-size:18px;margin:6px 0}.current-card{margin-top:10px}.current-icon{width:50px;height:50px}.current-icon svg{width:40px;height:40px}.state-line{min-height:20px;margin-top:8px}.side-actions{margin-top:8px}.note{margin-top:15px}}
+@media(max-width:370px){.manual-grid{grid-template-columns:repeat(2,1fr)}.rule{flex-direction:row}.board-under{flex-wrap:wrap}.controls{margin-left:auto}.hero h1{font-size:30px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="masthead"><div class="brand">ゲーム考古学研究室 <span style="font-weight:400">/ GAME ARCHAEOLOGY LAB</span></div><div class="edition">EXPERIMENT 02 · v0.2 / 30 PUZZLES</div></header>
+  <section class="hero"><p class="kicker">FORGOTTEN GAMES, REIMAGINED</p><h1>マスに、命令がある。</h1><p>駒はたったひとつ。<strong>今いるマスの記号が、次に動ける方向を決める。</strong><br>忘れられたボードゲーム「シャダ」の発想から生まれた、小さなソロパズル。</p><button type="button" class="jump-new" id="jump-new">前の7問を解いた方は、第8問から挑戦 →</button></section>
+  <main class="workspace">
+    <section class="panel board-panel" aria-label="パズル盤面">
+      <div class="panel-head"><div class="level-flag"><span class="level-index" id="level-index">01</span><span class="level-name" id="level-name">最初の一歩</span></div><div class="turn-counter">MOVE <strong id="moves">0</strong><span id="par" style="margin-left:7px">/ 最短 4</span><span id="personal-best" class="personal-best"></span></div></div>
+      <div class="board" id="board" role="group" aria-label="4行4列の盤面。緑に光るマスを選んで移動します"></div>
+      <div class="board-under"><div class="legend-inline"><span class="dot"></span><span id="legend-text">薄緑は移動できるマス</span></div><div class="controls"><button type="button" class="outline" id="undo">↶ もどす</button><button type="button" class="outline" id="reset">↻ やり直す</button></div></div>
+    </section>
+    <aside class="sidebar">
+      <section class="panel info-panel">
+        <div class="small-label">RESEARCH NOTE / 研究記録</div>
+        <h2 class="task-title" id="task-title">横と縦の記号を追え。</h2><p class="body-copy" id="task-copy">現在地の記号に従って駒を移動させ、右上の星までたどり着こう。</p>
+        <div class="current-card"><div class="current-icon" id="current-icon" aria-hidden="true"></div><div class="current-text"><strong id="current-title">横に1マス</strong><p id="current-description">左右どちらかに1マス進める</p></div></div>
+        <p class="state-line" id="state-line" role="status" aria-live="polite"></p>
+        <div class="side-actions"><button class="outline" type="button" id="hint">✦ 一手ヒント</button><button class="outline" type="button" id="toggle">◉ 移動先を隠す</button></div>
+        <div class="win" id="win"><b id="win-title">発掘成功！</b><p id="win-copy">星まで到達しました。</p><button class="solid" id="next" type="button">次の発掘へ →</button></div>
+      </section>
+      <section class="panel manual"><h2>発掘した移動記号</h2><div class="manual-grid" id="manual-grid"></div><p>● どの駒も同じ。<b>現在地の記号</b>だけを見よう。<br>● 盤面の外には進めない。2マス跳びは途中のマスを飛び越える。</p></section>
+      <section class="panel levels"><div class="small-label">EXCAVATION MAP / 発掘記録</div><div class="lvl-row" id="levels"></div><div class="progress"><span id="progress-label">0 / 30 発掘完了</span><span>✓ クリア済み</span></div></section>
+    </aside>
+  </main>
+  <footer class="note"><span><strong>これは原作シャダの復元ではありません。</strong><br>「いるマスが動き方を決める」原理を抽出した独自の実験パズルです。</span><span>ゲーム考古学研究室 #02<br>Made as a small, offline-playable experiment</span></footer>
+</div>
+<script>
+'use strict';
+const RULES={
+ H:{name:'横に1マス',detail:'左右のどちらかに、ちょうど1マス。',short:'横1',dirs:[[0,-1],[0,1]]},
+ V:{name:'縦に1マス',detail:'上か下に、ちょうど1マス。',short:'縦1',dirs:[[-1,0],[1,0]]},
+ D:{name:'斜めに1マス',detail:'斜め4方向のいずれかに1マス。',short:'斜1',dirs:[[-1,-1],[-1,1],[1,-1],[1,1]]},
+ J:{name:'縦横に2マス',detail:'上下左右のどちらかに、ちょうど2マス跳ぶ。',short:'跳2',dirs:[[0,-2],[0,2],[-2,0],[2,0]]}
+};
+const LEVELS=[
+ {name:'最初の一歩',task:'横と縦をつなごう。',copy:'横1・縦1の記号だけ。最初は薄緑に光るマスを選ぶだけでOK。',lines:['VHHV','VHVH','VHVH','HVHV'],start:12,goal:6,par:4,types:'HV'},
+ {name:'斜めの鍵',task:'斜めの移動を発見。',copy:'新しい記号「斜め1」が登場。次のマスの命令も読んでみよう。',lines:['VVHV','VHHD','DVVV','DHDV'],start:13,goal:3,par:5,types:'HVD'},
+ {name:'迷い道',task:'近さにだまされるな。',copy:'星に近いからといって正解とは限らない。到着先の動きも考えよう。',lines:['VVVD','VHDD','HVVV','HHDV'],start:12,goal:3,par:6,types:'HVD'},
+ {name:'跳躍の発見',task:'2マス跳びが加わった。',copy:'途中のマスは飛び越えられる。短い跳躍が、遠くへの近道になる。',lines:['VVJV','DDDH','DJVV','HJDV'],start:12,goal:3,par:5,types:'HVDJ'},
+ {name:'遠回りの近道',task:'ゴールとは逆へ進め。',copy:'星から離れる方向に進む手が、最短ルートを作ることもある。',lines:['JJVJ','VHDV','VHDH','HHDJ'],start:13,goal:2,par:6,types:'HVDJ'},
+ {name:'移動の連鎖',task:'次の手、そのまた次。',copy:'跳んで斜めへ、縦に戻ってまた跳ぶ。命令をつないで星を目指そう。',lines:['JDDH','JJJV','VVHH','VJDJ'],start:12,goal:3,par:8,types:'HVDJ'},
+ {name:'星の裏側',task:'最初の7問を締めくくろう。',copy:'どのマスに立てば、次の一手が開けるだろう？',lines:['VJHV','DDJH','VVDD','HHHJ'],start:13,goal:2,par:8,types:'HVDJ'},
+ {name:'細い抜け道',task:'ゴールへの近道を探そう。',copy:'見た目よりも、次に立つマスの働きが大切。',lines:['VVJD','HHVV','VDJJ','HHDJ'],start:13,goal:0,par:5,types:'HVDJ'},
+ {name:'斜めの寄り道',task:'斜め移動を味方に。',copy:'一歩外れてから、斜めの命令で戻ってみよう。',lines:['VHJD','DDVV','HHJV','VVDH'],start:14,goal:1,par:6,types:'HVDJ'},
+ {name:'ジャンプの着地点',task:'跳んだ先まで考える。',copy:'飛び越えた先の命令が、次の展開を変える。',lines:['JJHV','VHHH','DHVJ','JDHD'],start:14,goal:3,par:7,types:'HVDJ'},
+ {name:'左回りの道',task:'反対側にも道はある。',copy:'ゴールを真っすぐ追わず、別の入り口を探してみよう。',lines:['HHHJ','JDHJ','VJDJ','HDVJ'],start:8,goal:11,par:6,types:'HVDJ'},
+ {name:'角の発見',task:'四隅の使い道を探ろう。',copy:'端まで行くと移動候補は減る。でも、有利になることも。',lines:['JDVH','JDVH','HJDJ','DJVH'],start:15,goal:3,par:7,types:'HVDJ'},
+ {name:'迷路ではない迷路',task:'道が見えたら一手先へ。',copy:'壁がなくても、命令の組み合わせで迷路は生まれる。',lines:['HHHJ','DJHJ','JVHJ','DJDH'],start:12,goal:0,par:8,types:'HVDJ'},
+ {name:'次の次の一手',task:'先読みをひとつ深く。',copy:'今の移動先だけでなく、その次のマスを見よう。',lines:['JHVV','DHVH','HHDD','HHJD'],start:13,goal:0,par:7,types:'HVDJ'},
+ {name:'遠ざかる一歩',task:'一度離れたほうが近い。',copy:'目的地に寄ることだけが、よい一手とは限らない。',lines:['JVDH','JHDV','HHHV','DJJJ'],start:8,goal:1,par:8,types:'HVDJ'},
+ {name:'折り返し地点',task:'行きと帰りをつなぐ。',copy:'向きが変わるマスは、経路の節目になる。',lines:['JDDJ','HDJV','HVVJ','DJVH'],start:15,goal:3,par:8,types:'HVDJ'},
+ {name:'斜めの抜け道',task:'直線の誘惑を断ち切る。',copy:'一見遠そうな斜めの道が、全体では短いことも。',lines:['DJHV','DJHD','HVJV','DHHH'],start:15,goal:3,par:8,types:'HVDJ'},
+ {name:'踏み台の命令',task:'大きく跳ぶ前の準備。',copy:'跳躍マスへどう入るか。入口から設計しよう。',lines:['JDDV','DDDH','JHHH','JHVV'],start:15,goal:3,par:9,types:'HVDJ'},
+ {name:'出口はすぐそこ',task:'隣に見える星ほど遠い。',copy:'ゴールが近くても、そこへ進む命令が必要だ。',lines:['DHVV','VJVH','VHVH','DVHD'],start:14,goal:7,par:7,types:'HVDJ'},
+ {name:'星の裏口',task:'正面からは入れない。',copy:'入口を探すパズルだと思って遊んでみよう。',lines:['DJHD','DVHD','JVVJ','VHHH'],start:15,goal:3,par:8,types:'HVDJ'},
+ {name:'逆流する道',task:'いったん逆方向へ。',copy:'引き返す一手が、最短ルートの鍵になる。',lines:['JJJJ','DHJD','HJHV','HHJJ'],start:12,goal:0,par:9,types:'HVDJ'},
+ {name:'跳ね返る道',task:'端から端まで考えよう。',copy:'盤面の端で選択肢が変わることを利用する。',lines:['JDHD','DJVH','JDVV','VJDV'],start:13,goal:0,par:9,types:'HVDJ'},
+ {name:'遠い星',task:'10手の連鎖を読み解こう。',copy:'遠回りにも意味がある。命令を一つずつつなげよう。',lines:['DJHD','HVVH','JJVV','JDVJ'],start:14,goal:0,par:10,types:'HVDJ'},
+ {name:'最後の1マス',task:'最後の入り方が難しい。',copy:'ゴールへの一手から、逆向きに考えてみる。',lines:['JVDV','VJVV','VHVJ','HJVV'],start:14,goal:0,par:9,types:'HVDJ'},
+ {name:'遠ざかる勇気',task:'目先の近さを忘れよう。',copy:'ゴールから離れる動きにも、役割がある。',lines:['DDJJ','JHHV','JHHH','HVHH'],start:12,goal:1,par:9,types:'HVDJ'},
+ {name:'命令の橋',task:'離れた経路をつなげよう。',copy:'跳ぶ・曲がる・戻る。動きの種類を組み合わせよう。',lines:['DVDV','JJDD','JJHH','JHHV'],start:15,goal:3,par:10,types:'HVDJ'},
+ {name:'四辺の旅',task:'狭い盤面を広く使う。',copy:'端まで巡るルートが、思わぬ近道になる。',lines:['DVJJ','DJJD','VVDJ','HVDH'],start:12,goal:1,par:10,types:'HVDJ'},
+ {name:'二手先の誘惑',task:'見える道が正解とは限らない。',copy:'最初の一手だけで、次の展開が大きく変わる。',lines:['JJJD','HJJD','HHHD','DDJJ'],start:12,goal:0,par:9,types:'HVDJ'},
+ {name:'仕上げの連鎖',task:'最長級の発掘に挑む。',copy:'一手ずつの命令が、長いひとつの経路になる。',lines:['VJDH','DJVJ','DDVH','DHVH'],start:15,goal:3,par:11,types:'HVDJ'},
+ {name:'最終発掘',task:'最後は自分の目で道を読む。',copy:'最短を目指して、4種類の移動命令を使いこなそう。',lines:['DVVJ','VJVJ','VDJJ','VHJV'],start:13,goal:1,par:10,types:'HVDJ'}
+];
+let saved={};try{saved=JSON.parse(localStorage.getItem('game-arch-lab02')||'{}')}catch(_e){}
+let best=(saved.best&&typeof saved.best==='object'&&!Array.isArray(saved.best))?saved.best:{};
+// v0.1 の7問分の記録を維持し、旧作を完走した人には第8問を解放する。
+const highestClear=Math.max(-1,...Object.keys(best).filter(k=>/^\d+$/.test(k)&&Number(k)<LEVELS.length).map(Number));
+let unlocked=Math.min(LEVELS.length-1,Math.max(0,Number.isFinite(saved.unlocked)?saved.unlocked:0,highestClear+1));
+const resumeLevel=Number.isInteger(saved.lastLevel)&&saved.lastLevel>=0&&saved.lastLevel<=unlocked?saved.lastLevel:Math.max(0,Math.min(unlocked,highestClear+1));
+let levelIndex=0,position=0,history=[],moves=0,hints=0,hintTarget=null,showMoves=true;
+const $=id=>document.getElementById(id);
+const board=$('board');
+const lv=()=>LEVELS[levelIndex];
+const cells=()=>lv().lines.join('').split('');
+function legalAt(p,level=lv()){
+ const code=level.lines[Math.floor(p/4)][p%4],r=Math.floor(p/4),c=p%4;
+ return RULES[code].dirs.map(([dr,dc])=>[r+dr,c+dc]).filter(([rr,cc])=>rr>=0&&rr<4&&cc>=0&&cc<4).map(([rr,cc])=>rr*4+cc);
+}
+function solution(start,level=lv()){
+ const queue=[start],prev=Array(16).fill(-1);prev[start]=start;
+ for(let qi=0;qi<queue.length;qi++){
+  const from=queue[qi];if(from===level.goal)break;
+  for(const to of legalAt(from,level))if(prev[to]===-1){prev[to]=from;queue.push(to)}
+ }
+ if(prev[level.goal]===-1)return null;
+ const route=[level.goal];while(route[route.length-1]!==start)route.push(prev[route[route.length-1]]);
+ return route.reverse();
+}
+function icon(type){
+ const common='stroke="#4c5d51" stroke-width="3.6" stroke-linecap="round" fill="none"';
+ const dots=pts=>pts.map(([x,y])=>`<circle cx="${x}" cy="${y}" r="4.2" fill="#4c5d51"/>`).join('');
+ if(type==='H')return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M18 50H82" ${common}/>${dots([[18,50],[50,50],[82,50]])}</svg>`;
+ if(type==='V')return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 18V82" ${common}/>${dots([[50,18],[50,50],[50,82]])}</svg>`;
+ if(type==='D')return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M24 24L76 76M76 24L24 76" ${common}/>${dots([[24,24],[76,24],[50,50],[24,76],[76,76]])}</svg>`;
+ return `<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 12V88M12 50H88" ${common}/><circle cx="50" cy="50" r="4" fill="#4c5d51"/>${[[12,50],[88,50],[50,12],[50,88]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="5" stroke="#4c5d51" stroke-width="3" fill="#fff9e9"/>`).join('')}</svg>`;
+}
+function store(){try{localStorage.setItem('game-arch-lab02',JSON.stringify({unlocked,best,lastLevel:levelIndex}))}catch(_e){}}
+function chooseLevel(n){if(n>unlocked||n<0||n>=LEVELS.length)return;levelIndex=n;position=lv().start;history=[];moves=0;hints=0;hintTarget=null;store();render()}
+function moveTo(to){if(position===lv().goal||!legalAt(position).includes(to))return;
+ history.push(position);position=to;moves++;hintTarget=null;
+ if(position===lv().goal){if(!best[levelIndex]||moves<best[levelIndex])best[levelIndex]=moves;unlocked=Math.max(unlocked,Math.min(LEVELS.length-1,levelIndex+1));store()}
+ render();
+}
+function undo(){if(!history.length)return;position=history.pop();moves--;hintTarget=null;render()}
+function reset(){position=lv().start;history=[];moves=0;hints=0;hintTarget=null;render()}
+function hint(){if(position===lv().goal)return;const path=solution(position);if(path&&path.length>1){hintTarget=path[1];hints++;render()}else{hintTarget=null;render()}}
+function render(){
+ const level=lv(),done=position===level.goal,available=done?[]:legalAt(position),route=done?[position]:solution(position),list=cells();
+ $('level-index').textContent=String(levelIndex+1).padStart(2,'0');$('level-name').textContent=level.name;
+ $('moves').textContent=moves;$('par').textContent='/ 最短 '+level.par;
+ $('personal-best').textContent=best[levelIndex]?'自己ベスト '+best[levelIndex]+'手':'未クリア';
+ $('task-title').textContent=level.task;$('task-copy').textContent=level.copy;
+ board.innerHTML='';
+ list.forEach((t,i)=>{
+  const btn=document.createElement('button');btn.type='button';btn.className='cell '+((Math.floor(i/4)+i%4)%2?'dark':'light')+(i===position?' current':'')+(i===level.goal?' goal':'')+(showMoves&&available.includes(i)?' legal':'')+(i===hintTarget?' hint':'');
+  btn.setAttribute('aria-label',`${Math.floor(i/4)+1}行${i%4+1}列、${RULES[t].name}${i===position?'、現在地':''}${i===level.goal?'、ゴール':''}${available.includes(i)?'、移動可能':''}`);
+  btn.innerHTML=`<span class="tile-symbol">${icon(t)}</span>${i===level.goal?'<span class="goal-star">★</span><span class="goal-label">GOAL</span>':''}${i===position?'<span class="piece" aria-hidden="true"></span>':''}`;
+  btn.addEventListener('click',()=>moveTo(i));board.appendChild(btn);
+ });
+ const current=RULES[list[position]];$('current-icon').innerHTML=icon(list[position]);$('current-title').textContent=done?'星に到着！':current.name;$('current-description').textContent=done?'記号の連鎖を読み解いた。':current.detail;
+ const state=$('state-line');state.className='state-line'+(done?' success':'');
+ if(done)state.textContent=moves===level.par?'最短ルートを発見！ おめでとう。':`${moves}手で到着。あと${moves-level.par}手縮めれば最短。もう一度挑戦しよう。`;
+ else if(!available.length)state.textContent='行き止まり。ひとつ前のマスへ戻ろう。';
+ else if(!route)state.textContent='ここからは星に届かない。ひとつ前に戻ってみよう。';
+ else if(hintTarget!==null)state.textContent='金色の点線が次の一手のヒント。';
+ else if(history.length===0)state.textContent='最初の一手を選ぼう。薄緑のマスをタップ。';
+ else state.textContent='到着したマスで命令が変わった！ 次の一手を選ぼう。';
+ $('undo').disabled=!history.length;$('hint').disabled=done||!route||route.length<2;
+ $('toggle').textContent=showMoves?'◉ 移動先を隠す':'◎ 移動先を表示';$('legend-text').textContent=showMoves?'薄緑は移動できるマス':'記号を読んで行き先を選ぼう';
+ const win=$('win');win.classList.toggle('show',done);
+ $('win-title').textContent=done?(moves===level.par?'✦ 最短で発掘成功！':'✦ 発掘成功！'):'';
+ $('win-copy').textContent=done?`${moves}手でクリア（最短${level.par}手）${hints?' ／ ヒント使用 '+hints+'回':''}。${levelIndex===LEVELS.length-1?'全'+LEVELS.length+'問の発掘が完了！':'次の盤面にも、別の発見が待っている。'}`:'';
+ $('next').textContent=levelIndex===LEVELS.length-1?'最初から遊ぶ ↻':'次の発掘へ →';
+ $('manual-grid').innerHTML='';
+ Object.entries(RULES).forEach(([t,info])=>{const box=document.createElement('div');box.className='rule'+(level.types.includes(t)?' new':' disabled');box.innerHTML=icon(t)+`<div><strong>${info.short}</strong><span>${info.name}</span></div>`;$('manual-grid').appendChild(box)});
+ $('levels').innerHTML='';
+ const chapterEnds=[7,15,23,30],chapterNames=['I. 基本を覚える','II. 命令を見抜く','III. 道をつなぐ','IV. 最短を探す'];
+ let chapterBox=null, chapterRow=null;
+ LEVELS.forEach((l,i)=>{
+  if(i===0||chapterEnds.includes(i)){
+   const ch=chapterEnds.indexOf(i)+1;chapterBox=document.createElement('div');chapterBox.className='lvl-chapter';
+   const head=document.createElement('div');head.className='chapter-label';head.textContent=chapterNames[ch];
+   chapterRow=document.createElement('div');chapterRow.className='lvl-row';chapterBox.append(head,chapterRow);$('levels').appendChild(chapterBox);
+  }
+  const b=document.createElement('button');b.className='lvl-btn'+(i===levelIndex?' active':'')+(best[i]?' cleared':'')+(best[i]===l.par?' perfect':'');
+  b.textContent=String(i+1).padStart(2,'0');b.title=`第${i+1}問 ${l.name}`+(best[i]?`／自己ベスト ${best[i]}手`:'');
+  b.disabled=i>unlocked;b.setAttribute('aria-label',b.title+(best[i]?'（クリア済み）':''));b.addEventListener('click',()=>chooseLevel(i));chapterRow.appendChild(b);
+ });
+ $('progress-label').textContent=Object.keys(best).filter(k=>Number(k)>=0&&Number(k)<LEVELS.length&&best[k]>0).length+' / '+LEVELS.length+' 発掘完了';
+}
+$('jump-new').addEventListener('click',()=>{unlocked=Math.max(unlocked,7);chooseLevel(7)});
+$('undo').addEventListener('click',undo);$('reset').addEventListener('click',reset);$('hint').addEventListener('click',hint);
+$('toggle').addEventListener('click',()=>{showMoves=!showMoves;render()});
+$('next').addEventListener('click',()=>chooseLevel(levelIndex===LEVELS.length-1?0:levelIndex+1));
+document.addEventListener('keydown',e=>{if(e.key==='Backspace'&&e.target.tagName!=='INPUT'){e.preventDefault();undo()}else if(e.key.toLowerCase()==='r'&&!e.ctrlKey&&!e.metaKey){reset()}});
+// Validate every level's solution and advertised minimum on boot.
+LEVELS.forEach((level,i)=>{const route=solution(level.start,level);if(!route||route.length-1!==level.par)throw Error(`Invalid level ${i+1}: expected ${level.par}, got ${route?.length-1}`)});
+chooseLevel(resumeLevel);
+</script>
+</body>
+</html>
